@@ -12,12 +12,13 @@ class SimulationConfig(BaseModel):
     case_name: str = "PipeFlow_Oil_Gas_Stratified"
 
     # Controle de Tempo e Estabilidade Numérica
-    end_time: float = Field(default=5, gt=0, description="Tempo final de simulação em segundos")
+    end_time: float = Field(default=3, gt=0, description="Tempo final de simulação em segundos")
     delta_t: float = Field(default=1e-5, gt=0, description="Passo de tempo inicial em segundos")
     max_co: float = Field(default=0.35, gt=0, le=1.0, description="Número de Courant máximo")
     max_alpha_co: float = Field(default=0.2, gt=0, le=1.0, description="Courant máximo da interface")
     max_delta_t: float = Field(default=5e-4, gt=0, description="Passo de tempo máximo permitido em segundos")
     write_interval: float = Field(default=0.1, gt=0, description="Frequência de gravação")
+    yplus_interval: int = Field(default=10, ge=1, description="Intervalo de passos de tempo para calcular e imprimir o y+")
 
     # ==========================================================================
     # DADOS EXPERIMENTAIS DO ENSAIO (MukherjeeHor 1979 - GLDataID = 26894)
@@ -36,7 +37,7 @@ class SimulationConfig(BaseModel):
     # ==========================================================================
     diameter: float = Field(default=DIAMETER, gt=0, description="Diâmetro interno em metros")
     length: float = Field(default=LENGTH, gt=0, description="Comprimento do domínio em metros")
-    roughness: float = Field(default=3.00228e-5, ge=0.0, description="Rugosidade absoluta Ks da parede em metros")
+    roughness: float = Field(default=0, ge=0.0, description="Rugosidade absoluta Ks da parede em metros")
 
     # ==========================================================================
     # FRAÇÕES VOLUMÉTRICAS E VELOCIDADES REAIS DE ENTRADA

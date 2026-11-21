@@ -218,10 +218,28 @@ def read_surface_time_average(case_dir: Path, dict_name: str, last_n_steps: int 
     return float(np.median(window_values)), float(np.std(window_values)), len(window_values)
 
 
+def _select_recent_times(case_dir: Path, last_n_steps: int) -> str:
+    """Retorna os últimos N tempos válidos (> 0) com campos p_rgh e alpha.oil para passar ao -time."""
+    valid_times = []
+    for d in case_dir.iterdir():
+        if not d.is_dir():
+            continue
+        try:
+            t_val = float(d.name)
+        except ValueError:
+            continue
+        if t_val > 0.0 and (d / "p_rgh").is_file() and (d / "alpha.oil").is_file():
+            valid_times.append((t_val, d.name))
+    if not valid_times:
+        return ""
+    valid_times.sort(key=lambda item: item[0])
+    return ",".join(name for _, name in valid_times[-last_n_steps:])
+
+
 def extract_cfd_gradient_and_holdup(case_dir: Path, z_start: float, z_end: float, num_cores: int) -> dict:
     """
-    Amostra p_rgh e alpha.oil em TODOS os tempos salvos nos planos z_start e z_end,
-    calcula a média temporal dos últimos passos e retorna o gradiente médio (Pa/m).
+    Amostra p_rgh e alpha.oil apenas nos últimos TIME_AVG_STEPS tempos válidos
+    nos planos z_start e z_end, e retorna o gradiente médio (Pa/m).
     """
     sample_tasks = [
         ("plane_p_start", z_start, "p_rgh"),
@@ -231,6 +249,8 @@ def extract_cfd_gradient_and_holdup(case_dir: Path, z_start: float, z_end: float
     ]
     avg_values = {}
     samples_used = 0
+    time_list = _select_recent_times(case_dir, TIME_AVG_STEPS)
+    time_flag = f" -time {time_list}" if time_list else ""
 
     for dict_name, z_pos, field_name in sample_tasks:
         old_post = case_dir / "postProcessing" / dict_name
@@ -238,7 +258,7 @@ def extract_cfd_gradient_and_holdup(case_dir: Path, z_start: float, z_end: float
             shutil.rmtree(old_post, ignore_errors=True)
 
         create_plane_dict(case_dir, dict_name, z_pos, field_name)
-        res = run_foam_cmd(case_dir, f"postProcess -case {case_dir} -func {dict_name}", num_cores)
+        res = run_foam_cmd(case_dir, f"postProcess -case {case_dir} -func {dict_name}{time_flag}", num_cores)
 
         mean_val, std_val, n_used = read_surface_time_average(case_dir, dict_name, TIME_AVG_STEPS)
         if mean_val is None:

@@ -253,6 +253,21 @@ maxCo           {cfg.max_co};
 maxAlphaCo      {cfg.max_alpha_co};
 maxDeltaT       {cfg.max_delta_t};
 
+functions
+{{
+    yPlus
+    {{
+        type            yPlus;
+        libs            (fieldFunctionObjects);
+        executeControl  timeStep;
+        executeInterval {cfg.yplus_interval};
+        writeControl    timeStep;
+        writeInterval   {cfg.yplus_interval};
+        writeFields     false;
+        log             true;
+    }}
+}}
+
 // ************************************************************************* //
 """
     (system_dir / "controlDict").write_text(control_dict, encoding="utf-8")

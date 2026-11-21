@@ -157,7 +157,7 @@ if __name__ == "__main__":
     target_path = Path("template_case/system/blockMeshDict")
     
     # wall_expansion_ratio define a razão entre a célula no centro e a célula na parede.
-    generate_blockmesh_dict(config, target_path, wall_expansion_ratio=3.0)
+    generate_blockmesh_dict(config, target_path, wall_expansion_ratio=8.0)
 
     # Executa automaticamente o comando blockMesh no OpenFOAM
     print("Executing blockMesh in OpenFOAM...")

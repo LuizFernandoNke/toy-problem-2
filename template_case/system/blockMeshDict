@@ -47,10 +47,10 @@ blocks
     hex (0 1 2 3 8 9 10 11) (10 10 100) simpleGrading (1 1 1)
 
     // Blocos 1..4: Setores radiais curvados (mesmo n_radial para conformidade nas diagonais)
-    hex (7 4 1 0 15 12 9 8)   (10 20 100) simpleGrading (1 3.0 1)
-    hex (4 5 2 1 12 13 10 9)   (10 20 100) simpleGrading (1 3.0 1)
-    hex (5 6 3 2 13 14 11 10)  (10 20 100) simpleGrading (1 3.0 1)
-    hex (6 7 0 3 14 15 8 11)   (10 20 100) simpleGrading (1 3.0 1)
+    hex (7 4 1 0 15 12 9 8)   (10 20 100) simpleGrading (1 8.0 1)
+    hex (4 5 2 1 12 13 10 9)   (10 20 100) simpleGrading (1 8.0 1)
+    hex (5 6 3 2 13 14 11 10)  (10 20 100) simpleGrading (1 8.0 1)
+    hex (6 7 0 3 14 15 8 11)   (10 20 100) simpleGrading (1 8.0 1)
 );
 
 edges
