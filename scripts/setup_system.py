@@ -147,7 +147,7 @@ solvers
         $p_rgh;
         tolerance       1e-05;
         relTol          0;
-        maxIter         50;
+        maxIter         100;
     }
 
     "U.*"
@@ -162,7 +162,7 @@ solvers
     {
         solver          smoothSolver;
         smoother        GaussSeidel;
-        nSweeps         1;
+        nSweeps         2;
         tolerance       1e-06;
         relTol          0.1;
     }
@@ -172,7 +172,7 @@ PIMPLE
 {
     momentumPredictor           yes;
     correctPhi                  yes;
-    nOuterCorrectors            2;
+    nOuterCorrectors            3;
     nCorrectors                 2;
     nNonOrthogonalCorrectors    0;
 
@@ -205,6 +205,8 @@ relaxationFactors
         UFinal          1;
         k               0.7;
         kFinal          1;
+        epsilon         0.7;
+        epsilonFinal    1;
         omega           0.7;
         omegaFinal      1;
         "alpha.oil.*"   1;  
@@ -387,7 +389,7 @@ limitNut
     type            limitTurbulenceViscosity;
     active          true;
     selectionMode   all;
-    max             1e-3;
+    c               35;
 }
 
 multiphaseStabilizedTurbulence
@@ -397,8 +399,8 @@ multiphaseStabilizedTurbulence
 
     multiphaseStabilizedTurbulenceCoeffs
     {
-        alpha           0.05;
-        lambda2         0.1;
+        alpha           1.36;
+        lambda2         0.05;
     }
 }
 

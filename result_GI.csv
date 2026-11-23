@@ -1,0 +1,4 @@
+Malha,Mesh_Factor,n_core,n_radial,nz,Mesh_Cells,Grad_P_CFD_Pa_m,Holdup_CFD,U_Avg_m_s,U_Max_m_s,yPlus_Min,yPlus_Max,yPlus_Avg,yPlus_Status,Execution_Time_s,Erro_Rel_GradP_Pct,GCI_GradP_Pct,GCI_Holdup_Pct,GCI_Ordem_p,GCI_Asymptotic_Ratio,GCI_Convergence,GradP_Extrapolado_Pa_m
+Grossa,0.707,8,16,70,40320,81.4508,0.082,0.0,0.0,1.57,13.26,7.38,Buffer layer (1 < y+ < 30),1794.38,0.0,0.0,0.0,4.0,1.794,Monotônica,73.2435
+Média,1.0,10,20,100,90000,75.066,0.0749,0.0,0.0,0.76,12.36,5.97,Buffer layer (1 < y+ < 30),4409.78,8.51,5.55,26.19,4.0,1.794,Monotônica,73.2435
+Fina,1.414,14,28,141,248724,73.7134,0.0796,0.0,0.0,0.26,8.87,4.43,Buffer layer (1 < y+ < 30),17767.04,1.83,0.8,12.22,4.0,1.794,Monotônica,73.2435

@@ -19,7 +19,7 @@ limitNut
     type            limitTurbulenceViscosity;
     active          true;
     selectionMode   all;
-    max             1e-3;
+    c               35;
 }
 
 multiphaseStabilizedTurbulence
@@ -29,8 +29,8 @@ multiphaseStabilizedTurbulence
 
     multiphaseStabilizedTurbulenceCoeffs
     {
-        alpha           0.05;
-        lambda2         0.1;
+        alpha           1.36;
+        lambda2         0.05;
     }
 }
 

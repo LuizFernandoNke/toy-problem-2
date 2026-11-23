@@ -36,9 +36,9 @@ def calcular_turbulencia_entrada(u_gas: float, D: float) -> tuple[float, float]:
     Estima k e omega desenvolvidos para o escoamento turbulento no duto
     a partir da velocidade real do gás e do diâmetro hidráulico.
     """
-    # Intensidade turbulenta típica em dutos (~4.5%) e escala de comprimento l = 0.07 * D
-    I = 0.045
-    l_turb = 0.07 * D
+    # Intensidade turbulenta típica em dutos (~3%) e escala de comprimento l = 0.03 * D
+    I = 0.03
+    l_turb = 0.03 * D
     C_mu = 0.09
 
     k_inlet = max(1.5 * (u_gas * I) ** 2, 1e-4)
@@ -70,6 +70,7 @@ def setup_zero_files(cfg: SimulationConfig, case_dir: Path):
     alpha_target = cfg.inlet_alpha_oil
     y_base = calcular_y_interface(R, alpha_target)
     k_init, omega_init = calcular_turbulencia_entrada(u_gas, D)
+    epsilon_init = 0.09 * k_init * omega_init
 
     # --- 1. alpha.oil (Domínio inteiro + Entrada já estratificados na cota y_base) ---
     phase_field_name = "alpha.oil"
@@ -213,7 +214,7 @@ internalField   #codeStream
         const scalar Uavg = {u_avg:.6f};
         const scalar dU = {du:.6f};
         const scalar y0 = {y_base:.6f};
-        const scalar delta = 0.0015; // Camada de transição suave na interface (1.5 mm)
+        const scalar delta = 0.0005; // Camada de transição suave na interface (0.5 mm)
 
         forAll(C, i)
         {{
@@ -258,7 +259,7 @@ boundaryField
             const scalar Uavg = {u_avg:.6f};
             const scalar dU = {du:.6f};
             const scalar y0 = {y_base:.6f};
-            const scalar delta = 0.0015; // Camada de transição suave na interface (1.5 mm)
+            const scalar delta = 0.0005; // Camada de transição suave na interface (0.5 mm)
 
             const vectorField& C = patch().Cf();
             vectorField& U = *this;
@@ -396,6 +397,51 @@ boundaryField
 // ************************************************************************* //
 """
     (zero_dir / "omega").write_text(omega_content, encoding="utf-8")
+
+    # --- 4b. epsilon (Necessário para kEpsilon) ---
+    epsilon_content = f"""/*--------------------------------*- C++ -*----------------------------------*\\
+| =========                 |                                                 |
+| \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\\\    /   O peration     | Version:  v2606                                 |
+|   \\\\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\\\/     M anipulation  |                                                 |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      epsilon;
+}}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -3 0 0 0 0];
+
+internalField   uniform {epsilon_init:.6f};
+
+boundaryField
+{{
+    inlet
+    {{
+        type            fixedValue;
+        value           uniform {epsilon_init:.6f};
+    }}
+
+    walls
+    {{
+        type            epsilonWallFunction;
+        value           uniform {epsilon_init:.6f};
+    }}
+
+    outlet
+    {{
+        type            zeroGradient;
+    }}
+}}
+
+// ************************************************************************* //
+"""
+    (zero_dir / "epsilon").write_text(epsilon_content, encoding="utf-8")
 
     # --- 5. nut (Parede rugosa ou lisa conforme cfg.roughness) ---
     if cfg.roughness > 0:
